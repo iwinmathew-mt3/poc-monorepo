@@ -15,49 +15,56 @@ phases:
       - yum install -y jq
 
   pre_build:
-    commands:
-      - echo "Resolving environment variables (UI > build-config.json)"
+  commands:
+    - |
+      echo "Resolving environment variables (UI > build-config.json)"
 
-      # ---------- Load helper ----------
-      - |
-        resolve_var () {
-          VAR_NAME=$1
-          CONFIG_KEY=$2
+      # -------------------------------
+      # Function definition
+      # -------------------------------
+      resolve_var () {
+        VAR_NAME=$1
+        CONFIG_KEY=$2
 
-          if [ -z "${!VAR_NAME}" ] && [ -f build-config.json ]; then
-            VALUE=$(jq -r --arg key "$CONFIG_KEY" '.[$key] // empty' build-config.json)
-            export $VAR_NAME="$VALUE"
-          fi
-        }
+        if [ -z "${!VAR_NAME}" ] && [ -f build-config.json ]; then
+          VALUE=$(jq -r --arg key "$CONFIG_KEY" '.[$key] // empty' build-config.json)
+          export $VAR_NAME="$VALUE"
+        fi
+      }
 
-      # ---------- Resolve ALL vars ----------
-      - resolve_var BUILD_MODE BUILD_MODE
-      - resolve_var SITE_ID SITE_ID
-      - resolve_var CONCURRENCY CONCURRENCY
-      - resolve_var S3_BUCKET S3_BUCKET
-      - resolve_var CLOUDFRONT_DIST_ID CLOUDFRONT_DIST_ID
+      # -------------------------------
+      # Resolve ALL variables
+      # -------------------------------
+      resolve_var BUILD_MODE BUILD_MODE
+      resolve_var SITE_ID SITE_ID
+      resolve_var CONCURRENCY CONCURRENCY
+      resolve_var S3_BUCKET S3_BUCKET
+      resolve_var CLOUDFRONT_DIST_ID CLOUDFRONT_DIST_ID
 
-      # ---------- Defaults (ONLY if safe) ----------
-      - export BUILD_MODE=${BUILD_MODE:-all}
-      - export CONCURRENCY=${CONCURRENCY:-2}
+      # -------------------------------
+      # Defaults (safe only)
+      # -------------------------------
+      export BUILD_MODE=${BUILD_MODE:-all}
+      export CONCURRENCY=${CONCURRENCY:-2}
 
-      # ---------- Validation ----------
-      - |
-        if [ "$BUILD_MODE" = "single" ] && [ -z "$SITE_ID" ]; then
-          echo "ERROR: SITE_ID is required when BUILD_MODE=single"
+      # -------------------------------
+      # Validation
+      # -------------------------------
+      if [ "$BUILD_MODE" = "single" ] && [ -z "$SITE_ID" ]; then
+        echo "ERROR: SITE_ID is required when BUILD_MODE=single"
+        exit 1
+      fi
+
+      for v in BUILD_MODE S3_BUCKET CLOUDFRONT_DIST_ID; do
+        if [ -z "${!v}" ]; then
+          echo "ERROR: Required variable $v is missing"
           exit 1
         fi
+      done
 
-      - |
-        for v in BUILD_MODE S3_BUCKET CLOUDFRONT_DIST_ID; do
-          if [ -z "${!v}" ]; then
-            echo "ERROR: Required variable $v is missing"
-            exit 1
-          fi
-        done
+      echo "Final resolved variables:"
+      env | grep -E 'BUILD_MODE|SITE_ID|CONCURRENCY|S3_BUCKET|CLOUDFRONT_DIST_ID'
 
-      - echo "Final resolved variables:"
-      - env | grep -E 'BUILD_MODE|SITE_ID|CONCURRENCY|S3_BUCKET|CLOUDFRONT_DIST_ID'
 
   build:
     commands:

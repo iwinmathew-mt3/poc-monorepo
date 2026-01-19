@@ -40,20 +40,38 @@ phases:
 
   post_build:
     commands:
-      - echo "S3_BUCKET=$S3_BUCKET"
-      - echo "CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID"
+    - echo "S3_BUCKET=$S3_BUCKET"
+    - echo "CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID"
+    - echo "BUILD_MODE=$BUILD_MODE"
+    - echo "SITE_ID=$SITE_ID"
+    - echo "Copy build code  to S3"
 
-      - echo "▶ Syncing dist/ to S3"
-      - aws s3 sync dist/ s3://$S3_BUCKET/ --delete
+    - |
+ 
+      if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
+        echo "▶ Syncing ONLY site: $SITE_ID"
+        aws s3 sync \
+          dist/$SITE_ID/ \
+          s3://$S3_BUCKET/$SITE_ID/ \
+          --delete
 
-      - echo "▶ Invalidating CloudFront"
-      - |
-        if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
-          aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
-            --paths "/$SITE_ID/*"
-        else
-          aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
-            --paths "/*"
-        fi
+      else
+        echo "▶ Syncing ALL sites"
+        aws s3 sync \
+          dist/ \
+          s3://$S3_BUCKET/ \
+          --delete
+      fi
+    
+
+    - echo "▶ Invalidating CloudFront"
+    - |
+      if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
+        aws cloudfront create-invalidation \
+          --distribution-id $CLOUDFRONT_DIST_ID \
+          --paths "/$SITE_ID/*"
+      else
+        aws cloudfront create-invalidation \
+          --distribution-id $CLOUDFRONT_DIST_ID \
+          --paths "/*"
+      fi

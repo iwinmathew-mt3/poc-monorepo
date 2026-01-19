@@ -1,5 +1,4 @@
 version: 0.2
-#versions6
 
 env:
   shell: bash
@@ -13,12 +12,52 @@ phases:
       - node -v
       - npm -v
       - npm ci
+      - yum install -y jq
 
   pre_build:
     commands:
-      - echo "BUILD_MODE=${BUILD_MODE:-all}"
-      - echo "SITE_ID=$SITE_ID"
-      - echo "CONCURRENCY=${CONCURRENCY:-2}"
+      - echo "Resolving environment variables (UI > build-config.json)"
+
+      # ---------- Load helper ----------
+      - |
+        resolve_var () {
+          VAR_NAME=$1
+          CONFIG_KEY=$2
+
+          if [ -z "${!VAR_NAME}" ] && [ -f build-config.json ]; then
+            VALUE=$(jq -r --arg key "$CONFIG_KEY" '.[$key] // empty' build-config.json)
+            export $VAR_NAME="$VALUE"
+          fi
+        }
+
+      # ---------- Resolve ALL vars ----------
+      - resolve_var BUILD_MODE BUILD_MODE
+      - resolve_var SITE_ID SITE_ID
+      - resolve_var CONCURRENCY CONCURRENCY
+      - resolve_var S3_BUCKET S3_BUCKET
+      - resolve_var CLOUDFRONT_DIST_ID CLOUDFRONT_DIST_ID
+
+      # ---------- Defaults (ONLY if safe) ----------
+      - export BUILD_MODE=${BUILD_MODE:-all}
+      - export CONCURRENCY=${CONCURRENCY:-2}
+
+      # ---------- Validation ----------
+      - |
+        if [ "$BUILD_MODE" = "single" ] && [ -z "$SITE_ID" ]; then
+          echo "ERROR: SITE_ID is required when BUILD_MODE=single"
+          exit 1
+        fi
+
+      - |
+        for v in BUILD_MODE S3_BUCKET CLOUDFRONT_DIST_ID; do
+          if [ -z "${!v}" ]; then
+            echo "ERROR: Required variable $v is missing"
+            exit 1
+          fi
+        done
+
+      - echo "Final resolved variables:"
+      - env | grep -E 'BUILD_MODE|SITE_ID|CONCURRENCY|S3_BUCKET|CLOUDFRONT_DIST_ID'
 
   build:
     commands:
@@ -31,47 +70,40 @@ phases:
 
         elif [ "$BUILD_MODE" = "floorplans" ]; then
           echo "▶ Building floorplans only (incremental)"
-          npm run build:floorplans:all -- --concurrency ${CONCURRENCY:-2}
+          npm run build:floorplans:all -- --concurrency $CONCURRENCY
 
         else
           echo "▶ Building ALL sites"
-          npm run build:all -- --concurrency ${CONCURRENCY:-2}
-        fi  
+          npm run build:all -- --concurrency $CONCURRENCY
+        fi
 
   post_build:
     commands:
-    - echo "S3_BUCKET=$S3_BUCKET"
-    - echo "CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID"
-    - echo "BUILD_MODE=$BUILD_MODE"
-    - echo "SITE_ID=$SITE_ID"
-    - echo "Copy build code  to S3"
+      - echo "Copy build code to S3"
 
-    - |
- 
-      if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
-        echo "▶ Syncing ONLY site: $SITE_ID"
-        aws s3 sync \
-          dist/$SITE_ID/ \
-          s3://$S3_BUCKET/$SITE_ID/ \
-          --delete
+      - |
+        if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
+          echo "▶ Syncing ONLY site: $SITE_ID"
+          aws s3 sync \
+            dist/$SITE_ID/ \
+            s3://$S3_BUCKET/$SITE_ID/ \
+            --delete
+        else
+          echo "▶ Syncing ALL sites"
+          aws s3 sync \
+            dist/ \
+            s3://$S3_BUCKET/ \
+            --delete
+        fi
 
-      else
-        echo "▶ Syncing ALL sites"
-        aws s3 sync \
-          dist/ \
-          s3://$S3_BUCKET/ \
-          --delete
-      fi
-    
-
-    - echo "▶ Invalidating CloudFront"
-    - |
-      if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
-        aws cloudfront create-invalidation \
-          --distribution-id $CLOUDFRONT_DIST_ID \
-          --paths "/$SITE_ID/*"
-      else
-        aws cloudfront create-invalidation \
-          --distribution-id $CLOUDFRONT_DIST_ID \
-          --paths "/*"
-      fi
+      - echo "▶ Invalidating CloudFront"
+      - |
+        if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DIST_ID \
+            --paths "/$SITE_ID/*"
+        else
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DIST_ID \
+            --paths "/*"
+        fi

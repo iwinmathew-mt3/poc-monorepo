@@ -15,7 +15,7 @@ phases:
       - yum install -y jq
 
   pre_build:
-  commands:
+   commands:
     - |
       echo "Resolving environment variables (UI > build-config.json)"
 

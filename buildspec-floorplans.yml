@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - npm ci
+
+  pre_build:
+    commands:
+      - |
+        set -e
+        export SITE_ID=${SITE_ID:-}
+        export CONCURRENCY=${CONCURRENCY:-2}
+        export FORCE=${FORCE:-false}
+
+        echo "Floorplan build config"
+        echo "SITE_ID=$SITE_ID"
+        echo "CONCURRENCY=$CONCURRENCY"
+        echo "FORCE=$FORCE"
+
+  build:
+    commands:
+      - |
+        if [ -n "$SITE_ID" ]; then
+          if [ "$FORCE" = "true" ]; then
+            npm run build:floorplans $SITE_ID -- --force
+          else
+            npm run build:floorplans $SITE_ID
+          fi
+        else
+          if [ "$FORCE" = "true" ]; then
+            npm run build:floorplans:all -- --concurrency $CONCURRENCY --force
+          else
+            npm run build:floorplans:all -- --concurrency $CONCURRENCY
+          fi
+        fi

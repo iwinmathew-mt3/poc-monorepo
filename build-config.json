@@ -1,5 +1,5 @@
 {
-  "BUILD_MODE": "all",
+  "BUILD_MODE": "single",
   "SITE_ID": "property-001",
   "CONCURRENCY": 2,
   "S3_BUCKET": "bozzutto-mt3-frontend-poc",

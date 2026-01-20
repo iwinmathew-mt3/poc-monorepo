@@ -8,34 +8,60 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
+      - yum install -y jq
       - npm ci
 
   pre_build:
     commands:
       - |
         set -e
-        export SITE_ID=${SITE_ID:-}
-        export CONCURRENCY=${CONCURRENCY:-2}
-        export FORCE=${FORCE:-false}
 
-        echo "Floorplan build config"
+        if [ ! -f build-config.json ]; then
+          echo "ERROR: build-config.json not found"
+          exit 1
+        fi
+
+        # ---------- Read config ----------
+        BUILD_SCOPE=$(jq -r '.build_scope // "all"' build-config.json)
+        SITE_ID=$(jq -r '.site_id // empty' build-config.json)
+        FORCE=$(jq -r '.force // false' build-config.json)
+        CONCURRENCY=$(jq -r '.concurrency // 2' build-config.json)
+
+        # ---------- Validation ----------
+        if [ "$BUILD_SCOPE" = "single" ] && [ -z "$SITE_ID" ]; then
+          echo "ERROR: site_id is required when build_scope=single"
+          exit 1
+        fi
+
+        # ---------- Export for build phase ----------
+        export BUILD_SCOPE SITE_ID FORCE CONCURRENCY
+
+        echo "Resolved build config:"
+        echo "BUILD_SCOPE=$BUILD_SCOPE"
         echo "SITE_ID=$SITE_ID"
-        echo "CONCURRENCY=$CONCURRENCY"
         echo "FORCE=$FORCE"
+        echo "CONCURRENCY=$CONCURRENCY"
 
   build:
     commands:
       - |
-        if [ -n "$SITE_ID" ]; then
+        set -e
+
+        if [ "$BUILD_SCOPE" = "single" ]; then
+          echo "▶ Building floorplans for site: $SITE_ID"
+
           if [ "$FORCE" = "true" ]; then
-            npm run build:floorplans $SITE_ID -- --force
+            npm run build:floorplans "$SITE_ID" -- --force
           else
-            npm run build:floorplans $SITE_ID
+            npm run build:floorplans "$SITE_ID"
           fi
+
         else
+          echo "▶ Building floorplans for ALL sites"
+
           if [ "$FORCE" = "true" ]; then
-            npm run build:floorplans:all -- --concurrency $CONCURRENCY --force
+            npm run build:floorplans:all -- --concurrency "$CONCURRENCY" --force
           else
-            npm run build:floorplans:all -- --concurrency $CONCURRENCY
+            npm run build:floorplans:all -- --concurrency "$CONCURRENCY"
           fi
         fi

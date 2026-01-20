@@ -65,3 +65,34 @@ phases:
             npm run build:floorplans:all -- --concurrency "$CONCURRENCY"
           fi
         fi
+        
+  post_build:
+    commands:
+      - echo "Copy build code to S3"
+
+      - |
+        if [ "$BUILD_SCOPE" = "single" ] && [ -n "$SITE_ID" ]; then
+          echo "▶ Syncing ONLY site: $SITE_ID"
+          aws s3 sync \
+            dist/$SITE_ID/ \
+            s3://$S3_BUCKET/$SITE_ID/ \
+            --delete
+        else
+          echo "▶ Syncing ALL sites"
+          aws s3 sync \
+            dist/ \
+            s3://$S3_BUCKET/ \
+            --delete
+        fi
+
+      - echo "▶ Invalidating CloudFront"
+      - |
+        if [ "$BUILD_SCOPE" = "single" ] && [ -n "$SITE_ID" ]; then
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DIST_ID \
+            --paths "/$SITE_ID/*"
+        else
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DIST_ID \
+            --paths "/*"
+        fi      

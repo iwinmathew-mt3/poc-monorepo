@@ -1,6 +1,6 @@
 {
   "site_id": "",
   "build_scope": "all",
-  "force": false,
+  "force": true,
   "concurrency": 2
 }

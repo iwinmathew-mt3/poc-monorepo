@@ -108,7 +108,7 @@ function cloneTemplate(siteId: string): string {
 
   // Copy template files (excluding node_modules, .next, out)
   const excludeDirs = ['node_modules', '.next', 'out'];
-  
+
   cpSync(sourceDir, tempDir, {
     recursive: true,
     filter: (src) => {
@@ -301,10 +301,10 @@ export async function buildFloorplans(siteId: string, force = false): Promise<bo
   const siteTempDir = join(TEMP_DIR, `fp-${siteId}`);
 
   // Check if website exists (must build website first)
-  if (!existsSync(join(siteOutputDir, 'index.html'))) {
-    console.error(`[${siteId}] ❌ Website not found. Run "npm run build:site ${siteId}" first.`);
-    return false;
-  }
+  // if (!existsSync(join(siteOutputDir, 'index.html'))) {
+  //   console.error(`[${siteId}] ❌ Website not found. Run "npm run build:site ${siteId}" first.`);
+  //   return false;
+  // }
 
   try {
     // Clone template to isolated directory
@@ -385,7 +385,7 @@ export async function buildAllFloorplans(force = false, concurrency?: number): P
   const skippedCount = results.filter((r) => !r).length;
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-  
+
   console.log(`\n${'='.repeat(60)}`);
   console.log(`📊 BUILD SUMMARY`);
   console.log(`${'='.repeat(60)}`);

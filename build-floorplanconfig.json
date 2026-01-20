@@ -1,6 +1,6 @@
 {
-  "site_id": "",
-  "build_scope": "all",
+  "site_id": "property-001",
+  "build_scope": "single",
   "force": true,
   "concurrency": 2
 }

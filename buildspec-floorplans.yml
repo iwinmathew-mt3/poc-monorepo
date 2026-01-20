@@ -16,16 +16,16 @@ phases:
       - |
         set -e
 
-        if [ ! -f build-config.json ]; then
-          echo "ERROR: build-config.json not found"
+        if [ ! -f build-floorplanconfig.json ]; then
+          echo "ERROR: build-floorplanconfig.json not found"
           exit 1
         fi
 
         # ---------- Read config ----------
-        BUILD_SCOPE=$(jq -r '.build_scope // "all"' build-config.json)
-        SITE_ID=$(jq -r '.site_id // empty' build-config.json)
-        FORCE=$(jq -r '.force // false' build-config.json)
-        CONCURRENCY=$(jq -r '.concurrency // 2' build-config.json)
+        BUILD_SCOPE=$(jq -r '.build_scope // "all"' build-floorplanconfig.json)
+        SITE_ID=$(jq -r '.site_id // empty' build-floorplanconfig.json)
+        FORCE=$(jq -r '.force // false' build-floorplanconfig.json)
+        CONCURRENCY=$(jq -r '.concurrency // 2' build-floorplanconfig.json)
 
         # ---------- Validation ----------
         if [ "$BUILD_SCOPE" = "single" ] && [ -z "$SITE_ID" ]; then

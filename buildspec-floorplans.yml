@@ -71,7 +71,7 @@ phases:
         fi
         
   post_build:
-  commands:
+   commands:
     - echo "▶ Syncing floorplan output to S3"
 
     - |

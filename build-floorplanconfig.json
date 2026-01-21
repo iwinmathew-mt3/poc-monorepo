@@ -2,5 +2,7 @@
   "site_id": "property-001",
   "build_scope": "single",
   "force": true,
-  "concurrency": 2
+  "concurrency": 2,
+  "s3_bucket": "bozzutto-mt3-frontend-poc",
+  "cloudfront_dist_id": "E362T22EM0SGQ2"
 }

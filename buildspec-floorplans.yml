@@ -26,6 +26,8 @@ phases:
         SITE_ID=$(jq -r '.site_id // empty' build-floorplanconfig.json)
         FORCE=$(jq -r '.force // false' build-floorplanconfig.json)
         CONCURRENCY=$(jq -r '.concurrency // 2' build-floorplanconfig.json)
+        S3_BUCKET=$(jq -r '.s3_bucket // empty' build-floorplanconfig.json)
+        CLOUDFRONT_DIST_ID=$(jq -r '.cloudfront_dist_id // empty' build-floorplanconfig.json)
 
         # ---------- Validation ----------
         if [ "$BUILD_SCOPE" = "single" ] && [ -z "$SITE_ID" ]; then
@@ -34,13 +36,15 @@ phases:
         fi
 
         # ---------- Export for build phase ----------
-        export BUILD_SCOPE SITE_ID FORCE CONCURRENCY
+        export BUILD_SCOPE SITE_ID FORCE CONCURRENCY S3_BUCKET CLOUDFRONT_DIST_ID
 
         echo "Resolved build config:"
         echo "BUILD_SCOPE=$BUILD_SCOPE"
         echo "SITE_ID=$SITE_ID"
         echo "FORCE=$FORCE"
         echo "CONCURRENCY=$CONCURRENCY"
+        echo "S3_BUCKET=$S3_BUCKET"
+        echo "CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID"
 
   build:
     commands:

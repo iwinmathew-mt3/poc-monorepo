@@ -1,6 +1,6 @@
 {
   "site_id": "property-001",
-  "build_scope": "single",
+  "build_scope": "",
   "force": true,
   "concurrency": 2,
   "s3_bucket": "bozzutto-mt3-frontend-poc",

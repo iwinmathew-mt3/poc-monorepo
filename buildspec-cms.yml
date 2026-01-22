@@ -28,10 +28,10 @@ phases:
           exit 1
         fi
 
-        # Read S3_BUCKET & CLOUDFRONT_DIST_ID from build-config.json
+        # Read S3_BUCKET & CLOUDFRONT_DIST_ID from build-cmsconfig.json
         if [ -f build-config.json ]; then
-          export S3_BUCKET=$(jq -r '.S3_BUCKET // empty' build-config.json)
-          export CLOUDFRONT_DIST_ID=$(jq -r '.CLOUDFRONT_DIST_ID // empty' build-config.json)
+          export S3_BUCKET=$(jq -r '.S3_BUCKET // empty' build-cmsconfig.json)
+          export CLOUDFRONT_DIST_ID=$(jq -r '.CLOUDFRONT_DIST_ID // empty' build-cmsconfig.json)
         fi
 
         # Validate required variables

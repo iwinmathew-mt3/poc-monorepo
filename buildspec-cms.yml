@@ -1,0 +1,64 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "Installing dependencies..."
+      - node -v
+      - npm -v
+      - npm ci
+      - yum install -y jq
+
+  pre_build:
+    commands:
+      - |
+        echo "Resolving environment variables..."
+
+        # BUILD_MODE is always single for Lambda-triggered build
+        export BUILD_MODE="single"
+
+        # SITE_ID comes from Lambda override
+        if [ -z "$SITE_ID" ]; then
+          echo "ERROR: SITE_ID must be provided by Lambda!"
+          exit 1
+        fi
+
+        # Read S3_BUCKET & CLOUDFRONT_DIST_ID from build-config.json
+        if [ -f build-config.json ]; then
+          export S3_BUCKET=$(jq -r '.S3_BUCKET // empty' build-config.json)
+          export CLOUDFRONT_DIST_ID=$(jq -r '.CLOUDFRONT_DIST_ID // empty' build-config.json)
+        fi
+
+        # Validate required variables
+        for v in BUILD_MODE SITE_ID S3_BUCKET CLOUDFRONT_DIST_ID; do
+          if [ -z "${!v}" ]; then
+            echo "ERROR: Required variable $v is missing"
+            exit 1
+          fi
+        done
+
+        echo "Resolved variables:"
+        env | grep -E 'BUILD_MODE|SITE_ID|S3_BUCKET|CLOUDFRONT_DIST_ID'
+
+  build:
+    commands:
+      - echo "Starting build for site: $SITE_ID"
+      - npm run build:site -- $SITE_ID
+
+  post_build:
+    commands:
+      - echo "Syncing build to S3..."
+      - aws s3 sync \
+          dist/$SITE_ID/ \
+          s3://$S3_BUCKET/$SITE_ID/ \
+          --delete
+
+      - echo "Invalidating CloudFront for $SITE_ID..."
+      - aws cloudfront create-invalidation \
+          --distribution-id $CLOUDFRONT_DIST_ID \
+          --paths "/$SITE_ID/*"

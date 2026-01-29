@@ -435,4 +435,82 @@ Manual Release    CI on Commit       API Triggered     Scheduled Only
                            End Users
 
 ```
+## Codebuild logic
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              AWS CodeBuild                                    │
+│                    (GitHub Monorepo – Shared Logic)                            │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ install                                                                        │
+│ ──────────────────────────────────────────────────────────────────────────── │
+│ • Runtime: Node.js 20                                                          │
+│ • npm ci                                                                       │
+│                                 │
+│                                                                                │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ pre_build                                                                      │
+│ ──────────────────────────────────────────────────────────────────────────── │
+│ • Resolve environment variables                                                │
+│                                                                                │
+│   Pull / Push Builds (CodePipeline / CI)                                       │
+│   ────────────────────────────────────────                                     │
+│   BUILD_MODE        = single | "" (default = all)                              │
+│   SITE_ID           = property-001 (required for single)                       │
+│   CONCURRENCY       = <value>                                                   │
+│   S3_BUCKET         = <bucket-name>                                             │
+│   CLOUDFRONT_DIST_ID= <distribution-id>                                        │
+│                                                                                │
+│   CMS Build                                                                     │
+│   ─────────                                                                     │
+│   export BUILD_MODE="single"                                                    │
+│   SITE_ID passed from CMS trigger header                                              │
+│                                                                                │
+│   Floorplan Build (EventBridge Scheduled)                                       │
+│   ────────────────────────────────────────                                     │
+│   site_id           = property-001 | all                                       │
+│   build_scope       = "" (default all)                                          │
+│   force             = true | false                                              │
+│   concurrency       = 2                                                         │
+│                                                                                │
+│ • Normalize variables                                                          │
+│     - BUILD_MODE / build_scope → execution mode                                 │
+│     - SITE_ID / site_id → target sites                                          │
+│                                                                                │
+│ • Validation                                                                   │
+│     if BUILD_MODE == "single" && SITE_ID is empty → FAIL                        │
+│                                                                                │
+│ • Change detection (git diff / manifests)                                       │
+│                                                                                │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ build                                                                          │
+│ ──────────────────────────────────────────────────────────────────────────── │
+│ • Execution modes (shared across all builds)                                    │
+│                                                                                │
+│   ├─ Full Site Build                                                           │
+│   │    - BUILD_MODE empty / build_scope empty                                   │
+│   │    - Build all property sites                                               │
+│                                                                                │
+│   ├─ Selective Site Build                                                      │
+│   │    - BUILD_MODE=single OR site_id set                                       │
+│   │    - Build only specified property                                          │
+│                                                                                │
+│   └─ Floorplan Incremental Build                                                │
+│        - Scheduled hourly                                                       │
+│        - Build all or changed sites                                             │
+│        - FORCE=true bypasses change detection                                   │
+│                                                                                │
+│ • Parallel execution (CONCURRENCY / concurrency)                                │
+│                                                                                │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ post_build                                                                     │
+│ ──────────────────────────────────────────────────────────────────────────── │
+│ • Sync artifacts to S3                                                         │
+│     s3://<bucket>/property-001/                                                 │
+│     s3://<bucket>/property-002/                                                 │
+│     …                                                                           │
+│                                                                                │
+│ • Invalidate CloudFront (if configured)                                        │
+│                                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
 
+```

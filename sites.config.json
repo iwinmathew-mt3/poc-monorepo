@@ -6,6 +6,8 @@
             "basePath": "/property-001",
             "strapiEndpoint": "https://strapi.example.com/api/properties/001",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p0233508",
+            "unitsSiteId": "p0233508",
             "brand": {
                 "primaryColor": "#667eea",
                 "secondaryColor": "#764ba2",
@@ -21,6 +23,8 @@
             "basePath": "/property-002",
             "strapiEndpoint": "https://strapi.example.com/api/properties/002",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p0326919",
+            "unitsSiteId": "p0326919",
             "brand": {
                 "primaryColor": "#0ea5e9",
                 "secondaryColor": "#0284c7",
@@ -36,6 +40,8 @@
             "basePath": "/property-003",
             "strapiEndpoint": "https://strapi.example.com/api/properties/003",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p0979543",
+            "unitsSiteId": "p0979543",
             "brand": {
                 "primaryColor": "#10b981",
                 "secondaryColor": "#059669",
@@ -51,6 +57,8 @@
             "basePath": "/property-004",
             "strapiEndpoint": "https://strapi.example.com/api/properties/004",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p1281211",
+            "unitsSiteId": "p1281211",
             "brand": {
                 "primaryColor": "#dc2626",
                 "secondaryColor": "#991b1b",
@@ -66,6 +74,8 @@
             "basePath": "/property-005",
             "strapiEndpoint": "https://strapi.example.com/api/properties/005",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p1289936",
+            "unitsSiteId": "p1289936",
             "brand": {
                 "primaryColor": "#f59e0b",
                 "secondaryColor": "#d97706",
@@ -81,6 +91,8 @@
             "basePath": "/property-006",
             "strapiEndpoint": "https://strapi.example.com/api/properties/006",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p1526057",
+            "unitsSiteId": "p1526057",
             "brand": {
                 "primaryColor": "#8b5cf6",
                 "secondaryColor": "#6d28d9",
@@ -96,6 +108,8 @@
             "basePath": "/property-007",
             "strapiEndpoint": "https://strapi.example.com/api/properties/007",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p1918425",
+            "unitsSiteId": "p1918425",
             "brand": {
                 "primaryColor": "#f43f5e",
                 "secondaryColor": "#e11d48",
@@ -111,6 +125,8 @@
             "basePath": "/property-008",
             "strapiEndpoint": "https://strapi.example.com/api/properties/008",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p1952454",
+            "unitsSiteId": "p1952454",
             "brand": {
                 "primaryColor": "#06b6d4",
                 "secondaryColor": "#0891b2",
@@ -126,6 +142,8 @@
             "basePath": "/property-009",
             "strapiEndpoint": "https://strapi.example.com/api/properties/009",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p2064218",
+            "unitsSiteId": "p2064218",
             "brand": {
                 "primaryColor": "#64748b",
                 "secondaryColor": "#475569",
@@ -141,6 +159,8 @@
             "basePath": "/property-010",
             "strapiEndpoint": "https://strapi.example.com/api/properties/010",
             "floorplansEnabled": true,
+            "floorplansSiteId": "p2080531",
+            "unitsSiteId": "p2080531",
             "brand": {
                 "primaryColor": "#84cc16",
                 "secondaryColor": "#65a30d",

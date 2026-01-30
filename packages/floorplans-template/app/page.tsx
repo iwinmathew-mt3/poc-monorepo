@@ -1,93 +1,69 @@
 import { Header } from "@repo/shared/components";
+import { FloorplansContent } from "./FloorplansContent";
 
-interface Floorplan {
-  id: string;
-  name: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  price: number;
-  availableDate: string | null;
-}
+const floorplansBaseUrl =
+  "https://bozzuto-floorplans-dev.s3.us-east-1.amazonaws.com";
 
-// Default mock data for development (matches property-001 from floorplans-data.json)
-const mockFloorplans: Floorplan[] = [
-  {
-    id: "4389897",
-    name: "1 Bedroom Classic",
-    beds: 1,
-    baths: 1,
-    sqft: 800,
-    price: 1850,
-    availableDate: null,
-  },
-  {
-    id: "4389902",
-    name: "2 Bedroom Modern",
-    beds: 2,
-    baths: 2,
-    sqft: 1100,
-    price: 2450,
-    availableDate: "2026-02-15",
-  },
-  {
-    id: "4389896",
-    name: "3 Bedroom Deluxe",
-    beds: 3,
-    baths: 2,
-    sqft: 1450,
-    price: 3200,
-    availableDate: "2026-03-01",
-  },
-];
+async function fetchFloorplansHtml(siteId: string): Promise<string> {
+  const floorplansUrl = `${floorplansBaseUrl}/${siteId}/floorplans.html`;
 
-// Format price as currency
-function formatPrice(price: number): string {
-  return `$${price.toLocaleString()}/mo`;
-}
+  try {
+    const response = await fetch(floorplansUrl, {
+      cache: "force-cache",
+    });
 
-// Format availability date
-function formatAvailability(availableDate: string | null): {
-  text: string;
-  isNow: boolean;
-} {
-  if (!availableDate) {
-    return { text: "Available Now", isNow: true };
-  }
-
-  const date = new Date(availableDate);
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const year = date.getFullYear();
-
-  return { text: `Available ${month}/${day}/${year}`, isNow: false };
-}
-
-// Read floorplans from env (set at build time from JSON file)
-function getFloorplans(): Floorplan[] {
-  const data = process.env.FLOORPLANS_DATA;
-  if (data) {
-    try {
-      return JSON.parse(data);
-    } catch {
-      console.warn("Failed to parse FLOORPLANS_DATA");
+    if (!response.ok) {
+      throw new Error(`Failed to fetch floorplans: ${response.status}`);
     }
+
+    return await response.text();
+  } catch (error) {
+    console.error("Error fetching floorplans HTML:", error);
+    return `
+      <div class="no-results">
+        <h3>Unable to load floor plans</h3>
+        <p>Please try again later or contact support if the problem persists.</p>
+      </div>
+    `;
   }
-  // Fallback to mock data for development
-  return mockFloorplans;
 }
 
-export default function FloorplansPage() {
+function extractContentFromHtml(html: string): string {
+  const modernContainerMatch = html.match(
+    /<div[^>]*class="[^"]*modern-container[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<!--\s*JavaScript\s*-->\s*)?<script[^>]*>/i
+  );
+  if (modernContainerMatch) {
+    return modernContainerMatch[1];
+  }
+
+  const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (bodyMatch) {
+    return bodyMatch[1];
+  }
+
+  return html;
+}
+
+export default async function FloorplansPage() {
   const siteName = process.env.SITE_NAME || "Property";
   const websiteUrl = process.env.WEBSITE_URL || "/";
   const basePath = process.env.SITE_BASE_PATH || "";
-  const floorplans = getFloorplans();
+  const floorplansSiteId =
+    process.env.FLOORPLANS_SITE_ID || process.env.SITE_ID || "p1526057";
 
-  // Construct units URL - use dynamic route
-  const getUnitsUrl = (floorplanId: string) => {
-    const fullBasePath = basePath ? `${basePath}/floorplans` : '/floorplans';
-    return `${fullBasePath}/apartments/${floorplanId}`;
-  };
+  let htmlContent = "";
+
+  try {
+    const fullHtml = await fetchFloorplansHtml(floorplansSiteId);
+    htmlContent = extractContentFromHtml(fullHtml);
+  } catch (error: any) {
+    htmlContent = `
+      <div class="no-results">
+        <h3>Unable to load floor plans</h3>
+        <p>${error?.message || "Unknown error"}</p>
+      </div>
+    `;
+  }
 
   return (
     <>
@@ -101,29 +77,11 @@ export default function FloorplansPage() {
         <h1>Available Floorplans</h1>
         <p>Choose from our selection of thoughtfully designed floor plans.</p>
 
-        <div className="floorplans-grid">
-          {floorplans.map((fp) => {
-            const availability = formatAvailability(fp.availableDate);
-            const unitsUrl = getUnitsUrl(fp.id);
-            return (
-              <a key={fp.id} href={unitsUrl} className="floorplan-card">
-                <h2>{fp.name}</h2>
-                <div className="floorplan-price">{formatPrice(fp.price)}</div>
-                <div className="floorplan-details">
-                  <span>{fp.beds} Bed</span>
-                  <span>{fp.baths} Bath</span>
-                  <span>{fp.sqft} sq ft</span>
-                </div>
-                <div
-                  className={`floorplan-availability ${availability.isNow ? "available-now" : "available-later"
-                    }`}
-                >
-                  <span className="availability-dot">●</span>
-                  {availability.text}
-                </div>
-              </a>
-            );
-          })}
+        <div className="modern-container">
+          <FloorplansContent
+            htmlContent={htmlContent}
+            floorplansBaseUrl={floorplansBaseUrl}
+          />
         </div>
       </main>
     </>

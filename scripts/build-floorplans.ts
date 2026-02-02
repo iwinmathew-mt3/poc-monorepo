@@ -16,6 +16,8 @@ interface SiteConfig {
   id: string;
   name: string;
   basePath: string;
+  floorplansSiteId?: string;
+  unitsSiteId?: string;
   brand?: BrandConfig;
 }
 
@@ -317,6 +319,8 @@ export async function buildFloorplans(siteId: string, force = false): Promise<bo
       SITE_ID: site.id,
       SITE_NAME: site.name,
       SITE_BASE_PATH: site.basePath,
+      FLOORPLANS_SITE_ID: site.floorplansSiteId || "",
+      UNITS_SITE_ID: site.unitsSiteId || "",
       FLOORPLANS_DATA: JSON.stringify(siteData.floorplans),
       ...getBrandEnv(site.brand),
     };

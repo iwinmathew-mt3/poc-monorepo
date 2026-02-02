@@ -8,6 +8,7 @@ async function fetchFloorplansHtml(siteId: string): Promise<string> {
   const floorplansUrl = `${floorplansBaseUrl}/${siteId}/floorplans.html`;
 
   try {
+    console.info("Fetching floorplans HTML:", floorplansUrl);
     const response = await fetch(floorplansUrl, {
       cache: "force-cache",
     });

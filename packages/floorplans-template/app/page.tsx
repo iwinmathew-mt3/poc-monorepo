@@ -50,7 +50,7 @@ export default async function FloorplansPage() {
   const websiteUrl = process.env.WEBSITE_URL || "/";
   const basePath = process.env.SITE_BASE_PATH || "";
   const floorplansSiteId =
-    process.env.FLOORPLANS_SITE_ID || process.env.SITE_ID || "p1526057";
+    process.env.FLOORPLANS_SITE_ID || "";
 
   let htmlContent = "";
 

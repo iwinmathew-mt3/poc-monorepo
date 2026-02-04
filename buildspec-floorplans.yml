@@ -106,16 +106,3 @@ phases:
           fi
         done
       fi
-
-
-      - echo "▶ Invalidating CloudFront"
-      - |
-        if [ "$BUILD_SCOPE" = "single" ] && [ -n "$SITE_ID" ]; then
-          aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
-            --paths "/$SITE_ID/*"
-        else
-          aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
-            --paths "/*"
-        fi      

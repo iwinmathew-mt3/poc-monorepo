@@ -99,15 +99,3 @@ phases:
             s3://$S3_BUCKET/ \
             --delete
         fi
-
-      - echo "▶ Invalidating CloudFront"
-      - |
-        if [ "$BUILD_MODE" = "single" ] && [ -n "$SITE_ID" ]; then
-          aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
-            --paths "/$SITE_ID/*"
-        else
-          aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
-            --paths "/*"
-        fi

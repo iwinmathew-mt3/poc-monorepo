@@ -1,0 +1,69 @@
+@use "../../../styles/mixins" as *;
+
+.section {
+  padding: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.grid {
+  display: grid;
+  text-align: left;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 5vw, 4rem);
+  @include respondBelow(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.eyebrow {
+  line-height: 140%;
+  letter-spacing: 0.012em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-family: "helvetica-neue-lt-pro-cond";
+  font-size: 1rem;
+}
+
+.heading {
+  font-size: 48px;
+  font-family: "helvetica-neue-lt-pro-cond";
+  font-weight: 300;
+  line-height: 100%;
+
+  @include respondBelow(md) {
+    font-size: 24px;
+    line-height: 130%;
+  }
+}
+
+.body {
+  p {
+    font-weight: 400;
+    font-size: 1.25rem;
+    line-height: 1.5;
+
+    @include respondBelow(md) {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.media {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: cover;
+  border-radius: 24px;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.12);
+}

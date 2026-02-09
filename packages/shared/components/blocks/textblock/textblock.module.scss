@@ -1,0 +1,83 @@
+@use "../../../styles/mixins" as *;
+.section {
+  width: 100%;
+  padding-inline: clamp(2.5rem, 6vw, 4.5rem);
+
+}
+
+.textBlock {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: 60px;
+
+  button {
+    padding: 8px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid white;
+    cursor: pointer;
+    color: black;
+  }
+}
+
+.eyebrow {
+  line-height: 100%;
+  letter-spacing: 0.012em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-family: "helvetica-neue-lt-pro-cond";
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.heading {
+  font-family: "helvetica-neue-lt-pro-cond";
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include respondBelow(md) {
+    font-size: 28px;
+    line-height: 140%;
+    br {
+      display: none;
+    }
+  }
+}
+
+.description {
+  text-align: center;
+  max-width: 826px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1.5rem;
+
+  p {
+    font-weight: 400;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 0px;
+
+    @include respondBelow(md) {
+      font-size: 1.05rem;
+    }
+  }
+
+  ul,
+  ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    font-weight: 400;
+    font-size: 1.25rem;
+    line-height: 1.5;
+
+    @include respondBelow(md) {
+      font-size: 1.05rem;
+    }
+  }
+}

@@ -1,0 +1,529 @@
+/**
+ * Media Query Mixins
+ * Provides consistent breakpoints and responsive design utilities
+ */
+
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+
+// Breakpoint variables
+$breakpoints: (
+  'xxs': 320px,
+  'xs': 360px,
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px,
+  'xxl': 1400px,
+  'xxxl': 1600px,
+  'xxxxl': 1921px,
+);
+
+// Common breakpoints used in the project
+$mobile: 768px;
+$tablet: 991px;
+$desktop: 1200px;
+
+/**
+ * Media Query Mixins
+ */
+
+// Mobile first approach - min-width queries
+@mixin respondAbove($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (min-width: #{map.get($breakpoints, $breakpoint)}) {
+      @content;
+    }
+  } @else {
+    @media (min-width: #{$breakpoint}) {
+      @content;
+    }
+  }
+}
+
+// Desktop first approach - max-width queries
+@mixin respondBelow($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (max-width: #{map.get($breakpoints, $breakpoint) - 1px}) {
+      @content;
+    }
+  } @else {
+    @media (max-width: #{$breakpoint - 1px}) {
+      @content;
+    }
+  }
+}
+
+// Between two breakpoints
+@mixin respondBetween($lower, $upper) {
+  $min: if(
+    map.has-key($breakpoints, $lower),
+    map.get($breakpoints, $lower),
+    $lower
+  );
+  $max: if(
+    map.has-key($breakpoints, $upper),
+    map.get($breakpoints, $upper),
+    $upper
+  );
+
+  @media (min-width: #{$min}) and (max-width: #{$max - 1px}) {
+    @content;
+  }
+}
+
+// Only specific breakpoint
+@mixin respondOnly($breakpoint) {
+  @if $breakpoint == 'xs' {
+    @include respondBelow('sm') {
+      @content;
+    }
+  } @else if $breakpoint == 'sm' {
+    @include respondBetween('sm', 'md') {
+      @content;
+    }
+  } @else if $breakpoint == 'md' {
+    @include respondBetween('md', 'lg') {
+      @content;
+    }
+  } @else if $breakpoint == 'lg' {
+    @include respondBetween('lg', 'xl') {
+      @content;
+    }
+  } @else if $breakpoint == 'xl' {
+    @include respondBetween('xl', 'xxl') {
+      @content;
+    }
+  } @else if $breakpoint == 'xxl' {
+    @include respondAbove('xxl') {
+      @content;
+    }
+  }
+}
+
+/**
+ * Semantic Media Query Mixins
+ * Based on common usage patterns in the project
+ */
+
+// Mobile devices (phones)
+@mixin mobile {
+  @media (max-width: #{$mobile - 1px}) {
+    @content;
+  }
+}
+
+// Tablet devices
+@mixin tablet {
+  @media (min-width: #{$mobile}) and (max-width: #{$tablet}) {
+    @content;
+  }
+}
+
+// Desktop devices
+@mixin desktop {
+  @media (min-width: #{$desktop}) {
+    @content;
+  }
+}
+
+// Mobile and tablet combined
+@mixin mobileTablet {
+  @media (max-width: #{$tablet}) {
+    @content;
+  }
+}
+
+// Tablet and desktop combined
+@mixin tabletDesktop {
+  @media (min-width: #{$mobile}) {
+    @content;
+  }
+}
+
+/**
+ * Device-specific mixins
+ */
+
+// Touch devices
+@mixin touch {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+// Hover-capable devices
+@mixin hover {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+// High DPI/Retina displays
+@mixin retina {
+  @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi),
+    (min-resolution: 2dppx) {
+    @content;
+  }
+}
+
+/**
+ * Orientation mixins
+ */
+
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+/**
+ * Accessibility mixins
+ */
+
+// Reduced motion preference
+@mixin reducedMotion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// High contrast preference
+@mixin highContrast {
+  @media (prefers-contrast: high) {
+    @content;
+  }
+}
+
+// Dark mode preference
+@mixin darkMode {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}
+
+// Light mode preference
+@mixin lightMode {
+  @media (prefers-color-scheme: light) {
+    @content;
+  }
+}
+
+/**
+ * Container query mixins (for modern browsers)
+ */
+
+@mixin containerUp($size) {
+  @container (min-width: #{$size}) {
+    @content;
+  }
+}
+
+@mixin containerDown($size) {
+  @container (max-width: #{$size - 1px}) {
+    @content;
+  }
+}
+
+/**
+ * Print styles
+ */
+
+@mixin print {
+  @media print {
+    @content;
+  }
+}
+
+/**
+ * Utility mixins for common responsive patterns
+ */
+
+// Hide element on specific breakpoints
+@mixin hideOn($breakpoint) {
+  @if $breakpoint == 'mobile' {
+    @include mobile {
+      display: none !important;
+    }
+  } @else if $breakpoint == 'tablet' {
+    @include tablet {
+      display: none !important;
+    }
+  } @else if $breakpoint == 'desktop' {
+    @include desktop {
+      display: none !important;
+    }
+  } @else {
+    @include respondOnly($breakpoint) {
+      display: none !important;
+    }
+  }
+}
+
+// Show element only on specific breakpoints
+@mixin showOn($breakpoint) {
+  display: none !important;
+
+  @if $breakpoint == 'mobile' {
+    @include mobile {
+      display: block !important;
+    }
+  } @else if $breakpoint == 'tablet' {
+    @include tablet {
+      display: block !important;
+    }
+  } @else if $breakpoint == 'desktop' {
+    @include desktop {
+      display: block !important;
+    }
+  } @else {
+    @include respondOnly($breakpoint) {
+      display: block !important;
+    }
+  }
+}
+
+// Responsive font sizes
+@mixin responsiveFont(
+  $mobile-size,
+  $desktop-size,
+  $mobile-bp: $mobile,
+  $desktop-bp: $desktop
+) {
+  font-size: $mobile-size;
+
+  @media (min-width: #{$mobile-bp}) {
+    font-size: calc(
+      #{$mobile-size} +
+        (#{strip-unit($desktop-size)} - #{strip-unit($mobile-size)}) *
+        (
+          (100vw - #{$mobile-bp}) /
+            (#{strip-unit($desktop-bp)} - #{strip-unit($mobile-bp)})
+        )
+    );
+  }
+
+  @media (min-width: #{$desktop-bp}) {
+    font-size: $desktop-size;
+  }
+}
+
+// Helper function to strip units
+@function strip-unit($number) {
+  @if meta.type-of($number) == 'number' and not math.is-unitless($number) {
+    @return math.div($number, $number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+/**
+ * Grid system mixins
+ */
+
+@mixin gridResponsive($mobile-cols: 1, $tablet-cols: 2, $desktop-cols: 3) {
+  display: grid;
+  grid-template-columns: repeat(#{$mobile-cols}, 1fr);
+  gap: var(--space-lg);
+
+  @include tablet {
+    grid-template-columns: repeat(#{$tablet-cols}, 1fr);
+  }
+
+  @include desktop {
+    grid-template-columns: repeat(#{$desktop-cols}, 1fr);
+  }
+}
+
+// Flexbox responsive direction
+@mixin flexResponsive($mobile-direction: column, $desktop-direction: row) {
+  display: flex;
+  flex-direction: $mobile-direction;
+
+  @include desktop {
+    flex-direction: $desktop-direction;
+  }
+}
+
+/** 
+* Typography mixins
+* Usage:
+* @include typography('display-9xl', 'heading');
+* @include typography('display-9xl', 'base');
+* @include typography('display-9xl', 'baseCondensed');
+* @include typography('display-9xl', 'baseCondensed');
+**/
+
+@mixin typography($variant, $family: 'base', $line-height: null) {
+  font-family: var(--font-#{$family});
+  font-size: var(--#{$variant}-size);
+
+  @if $line-height != null {
+    line-height: $line-height;
+  } @else {
+    line-height: var(--#{$variant}-line-height);
+  }
+
+  letter-spacing: -0.01rem;
+
+  @if $family == 'heading' {
+    font-weight: var(--font-weight-light);
+  }
+}
+
+/**
+ * Fluid Typography Mixin using clamp()
+ * Creates smooth scaling between viewport sizes using CSS clamp
+ * 
+ * This mixin provides fluid typography that scales smoothly between mobile and desktop sizes.
+ * It uses CSS clamp() for modern browsers and provides a fallback for older browsers.
+ * 
+ * Features:
+ * - Automatic font family application with correct weight for headings
+ * - Smooth scaling between viewport sizes using CSS clamp()
+ * - Maintains consistent line height and letter spacing
+ * - Configurable scale factor for mobile sizes
+ * - Fallback for browsers that don't support clamp()
+ * 
+ * @param $variant - The typography variant (e.g., 'display-9xl', 'text-lg')
+ *                  Variants follow the scale:
+ *                  - display: 9xl to xs (112px to 20px)
+ *                  - text: xl to xs (26px to 16px)
+ *                  - utility: lg to sm (14px to 10px)
+ * @param $family - The font family to use:
+ *                 - 'heading' (Surveyor, weight: 300)
+ *                 - 'base' (Helvetica Neue)
+ *                 - 'baseCondensed' (Helvetica Neue Condensed)
+ * @param $min-vw - The minimum viewport width (default: $mobile - 768px)
+ * @param $max-vw - The maximum viewport width (default: $desktop - 1200px)
+ * @param $scale-factor - Scale factor for mobile size (default: 0.6)
+ *                       This determines how much smaller the font will be on mobile
+ *                       0.6 means mobile size will be 60% of desktop size
+ *
+ * Usage:
+ * Basic:
+ * ```scss
+ * .heading {
+ *   @include fluidTypography('display-3xl', 'heading');
+ * }
+ * ```
+ * 
+ * Custom viewport and scale:
+ * ```scss
+ * .custom-text {
+ *   @include fluidTypography('text-lg', 'base', 576px, 1440px, 0.75);
+ * }
+ * ```
+ */
+@mixin fluidTypography(
+  $variant,
+  $family: 'base',
+  $line-height: null,
+  $min-vw: $mobile,
+  $max-vw: $desktop,
+  $scale-factor: 0.6
+) {
+  // Set the font family and weight
+  font-family: var(--font-#{$family});
+
+  @if $family == 'heading' {
+    font-weight: var(--font-weight-light);
+  }
+
+  // Set consistent line height and letter spacing
+  @if $line-height != null {
+    line-height: $line-height;
+  } @else {
+    line-height: var(--#{$variant}-line-height);
+  }
+
+  letter-spacing: -0.01rem;
+
+  // Get pixel values based on variant
+  $max-size: 16px; // Default fallback
+
+  @if $variant == 'display-9xl' {
+    $max-size: 112px;
+  } @else if $variant == 'display-8xl' {
+    $max-size: 96px;
+  } @else if $variant == 'display-7xl' {
+    $max-size: 80px;
+  } @else if $variant == 'display-6xl' {
+    $max-size: 72px;
+  } @else if $variant == 'display-5xl' {
+    $max-size: 64px;
+  } @else if $variant == 'display-4xl' {
+    $max-size: 56px;
+  } @else if $variant == 'display-3xl' {
+    $max-size: 48px;
+  } @else if $variant == 'display-2xl' {
+    $max-size: 40px;
+  } @else if $variant == 'display-xl' {
+    $max-size: 36px;
+  } @else if $variant == 'display-lg' {
+    $max-size: 32px;
+  } @else if $variant == 'display-md' {
+    $max-size: 28px;
+  } @else if $variant == 'display-sm' {
+    $max-size: 24px;
+  } @else if $variant == 'display-xs' {
+    $max-size: 20px;
+  } @else if $variant == 'text-xl' {
+    $max-size: 26px;
+  } @else if $variant == 'text-lg' {
+    $max-size: 24px;
+  } @else if $variant == 'text-md' {
+    $max-size: 20px;
+  } @else if $variant == 'text-sm' {
+    $max-size: 18px;
+  } @else if $variant == 'text-xs' {
+    $max-size: 16px;
+  } @else if $variant == 'utility-lg' {
+    $max-size: 14px;
+  } @else if $variant == 'utility-md' {
+    $max-size: 12px;
+  } @else if $variant == 'utility-sm' {
+    $max-size: 10px;
+  }
+
+  // Calculate the minimum size
+  $min-size: $max-size * $scale-factor;
+
+  // Apply fluid typography using clamp with direct pixel values
+  font-size: clamp(
+    #{$min-size},
+    calc(
+      #{$min-size} + #{strip-unit($max-size - $min-size)} *
+        ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)})
+    ),
+    #{$max-size}
+  );
+
+  // Fallback for browsers that don't support clamp
+  @supports not (font-size: clamp(1px, 2vw, 3px)) {
+    font-size: $min-size;
+
+    @media (min-width: #{$min-vw}) {
+      font-size: calc(
+        #{$min-size} + #{strip-unit($max-size - $min-size)} *
+          ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)})
+      );
+    }
+
+    @media (min-width: #{$max-vw}) {
+      font-size: $max-size;
+    }
+  }
+}
+
+
+
+

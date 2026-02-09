@@ -1,16 +1,38 @@
-export default function Home() {
-  const siteName = process.env.SITE_NAME || 'Property Website';
-  const floorplansUrl = process.env.FLOORPLANS_URL || '/floorplans';
+import PageContent from "./lib/PageContent";
+import fetchContentType, { StrapiData } from "./lib/fetchContentType";
+
+export const revalidate = 3600;
+export const dynamic = "force-static";
+
+export default async function Home() {
+  const rawBaseUrl =
+    process.env.NEXT_PUBLIC_STRAPI_API_URL || process.env.STRAPI_API_URL || "";
+  const isFullApiEndpoint =
+    /\/api\/.+/.test(rawBaseUrl) && !/\/api\/?$/.test(rawBaseUrl);
+  const pageData = (await fetchContentType(
+    "pages",
+    isFullApiEndpoint
+      ? {}
+      : {
+          filters: {
+            Title: { $eq: "HomePage" },
+          },
+        },
+    true,
+    false,
+  )) as StrapiData;
+
+  if (!pageData) {
+    return (
+      <main className="mainContainer">
+        <h1>Page not found</h1>
+      </main>
+    );
+  }
 
   return (
-    <>
-      <main>
-        <h1>Welcome to {siteName}</h1>
-        <p>Your dream home awaits.</p>
-        <a href={floorplansUrl} className="cta-link">
-          View Available Floorplans →
-        </a>
-      </main>
-    </>
+    <main className="mainContainer">
+      <PageContent pageData={pageData} />
+    </main>
   );
 }

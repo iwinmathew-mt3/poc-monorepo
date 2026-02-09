@@ -1,5 +1,5 @@
-@import '@repo/shared/styles/header.css';
-@import './theme.css';
+@import "@repo/shared/styles/header.css";
+@import "./theme.css";
 
 * {
   box-sizing: border-box;
@@ -15,7 +15,11 @@ body {
 
 body {
   font-family: var(--brand-font-family, system-ui, -apple-system, sans-serif);
-  background: linear-gradient(135deg, var(--brand-primary, #667eea) 0%, var(--brand-secondary, #764ba2) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-primary, #667eea) 0%,
+    var(--brand-secondary, #764ba2) 100%
+  );
   color: white;
   min-height: 100vh;
   display: flex;
@@ -29,7 +33,6 @@ main {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 2rem;
 }
 
 h1 {
@@ -51,7 +54,9 @@ p {
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .cta-link:hover {

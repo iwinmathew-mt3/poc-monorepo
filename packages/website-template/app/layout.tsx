@@ -21,7 +21,7 @@ function getBrandStyles(): React.CSSProperties {
 
 const siteName = process.env.SITE_NAME || 'Property Website';
 const floorplansUrl = process.env.FLOORPLANS_URL || '/floorplans';
-const basePath = process.env.SITE_BASE_PATH || 'http://localhost:3002';
+const basePath = process.env.SITE_BASE_PATH || 'http://localhost:3000';
 
 export default function RootLayout({
   children,

@@ -22,7 +22,7 @@ body {
 
 main {
   margin: 0 auto;
-  padding: 2rem;
+  padding: 5rem 2rem 2rem 2rem;
 }
 
 h1 {
@@ -31,7 +31,7 @@ h1 {
   color: #222;
 }
 
-main>p {
+main > p {
   font-size: 1.1rem;
   color: #666;
   margin-bottom: 2rem;
@@ -48,7 +48,9 @@ main>p {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .floorplan-card:hover {

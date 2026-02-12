@@ -8,6 +8,7 @@ import {
   copyFileSync,
   writeFileSync,
 } from "fs";
+import { isDarkColor } from "./utils/color";
 
 interface BrandConfig {
   primaryColor: string;
@@ -15,6 +16,8 @@ interface BrandConfig {
   accentColor: string;
   headerBg: string;
   headerText: string;
+  buttonBg?: string;
+  buttonTextColor?: string;
   fontFamily: string;
 }
 
@@ -56,12 +59,20 @@ function copyThemeFileToTemp(siteId: string, tempTemplateDir: string): void {
 function getBrandEnv(brand?: BrandConfig): Record<string, string> {
   if (!brand) return {};
 
+  const headerBg = brand.headerBg || "#ffffff";
+  const darkHeader = isDarkColor(headerBg);
+  const buttonBg = brand.buttonBg || (darkHeader ? "#ffffff" : "#000000");
+  const buttonTextColor =
+    brand.buttonTextColor || (darkHeader ? "#000000" : "#ffffff");
+
   return {
     BRAND_PRIMARY_COLOR: brand.primaryColor,
     BRAND_SECONDARY_COLOR: brand.secondaryColor,
     BRAND_ACCENT_COLOR: brand.accentColor,
-    BRAND_HEADER_BG: brand.headerBg,
+    BRAND_HEADER_BG: headerBg,
     BRAND_HEADER_TEXT: brand.headerText,
+    BRAND_HEADER_BUTTON_BG: buttonBg,
+    BRAND_HEADER_BUTTON_TEXT: buttonTextColor,
     BRAND_FONT_FAMILY: brand.fontFamily,
   };
 }

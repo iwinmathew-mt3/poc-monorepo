@@ -10,6 +10,8 @@
   /* Header */
   --brand-header-bg: #ffffff;
   --brand-header-text: #333333;
+  --brand-header-button-bg: #000000;
+  --brand-header-button-text: #ffffff;
   
   /* Typography */
   --brand-font-family: system-ui, -apple-system, sans-serif;

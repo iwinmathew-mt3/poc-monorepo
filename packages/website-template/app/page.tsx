@@ -34,5 +34,5 @@ export default async function Home() {
     <main className="mainContainer">
       <PageContent pageData={pageData} />
     </main>
-  );
+   );
 }

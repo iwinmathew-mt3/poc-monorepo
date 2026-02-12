@@ -4,6 +4,7 @@ import React from "react";
 import styles from "./twocolumncontent.module.scss";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { getStrapiImageUrl, normalizeStrapiMedia } from "../strapi-media";
+import { CtaData } from "../../../types/cta";
 
 interface TwoColumnImage {
   src: string;
@@ -17,6 +18,8 @@ interface TwoColumnContentProps {
   image?: TwoColumnImage;
   media?: unknown;
   className?: string;
+  cta?: CtaData;
+  imageTrailing?: boolean;
 }
 
 export const TwoColumnContent: React.FC<TwoColumnContentProps> = ({
@@ -26,6 +29,8 @@ export const TwoColumnContent: React.FC<TwoColumnContentProps> = ({
   image: imageProp,
   media,
   className = "",
+  cta,
+  imageTrailing = false,
 }: TwoColumnContentProps) => {
   const firstMedia = normalizeStrapiMedia(media)[0];
   const image =
@@ -36,11 +41,16 @@ export const TwoColumnContent: React.FC<TwoColumnContentProps> = ({
           alt: firstMedia.alternativeText ?? undefined,
         }
       : null);
+  console.log("llll", imageTrailing);
 
   return (
     <section className={`${styles.section} ${className}`.trim()}>
-      <div className="container">
-        <div className={styles.grid}>
+      <div className={styles.container}>
+        <div
+          className={`${styles.grid} ${
+            imageTrailing ? styles.imageTrailing : styles.imageLeading
+          }`.trim()}
+        >
           <div className={styles.text}>
             {preTitle && <div className={styles.eyebrow}>{preTitle}</div>}
             <h2
@@ -56,6 +66,7 @@ export const TwoColumnContent: React.FC<TwoColumnContentProps> = ({
                 )}
               </div>
             )}
+            <div>{cta && <button>{cta.text}</button>}</div>
           </div>
           <div className={styles.media}>
             {image && (

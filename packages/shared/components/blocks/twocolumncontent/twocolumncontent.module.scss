@@ -1,7 +1,16 @@
 @use "../../../styles/mixins" as *;
 
 .section {
-  padding: clamp(2.5rem, 6vw, 4.5rem);
+  padding: clamp(2.5rem, 6vw, 4rem);
+  background: white;
+  width: 100%;
+}
+.container {
+  max-width: 1280px;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  margin-inline: auto;
 }
 
 .grid {
@@ -9,8 +18,29 @@
   text-align: left;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
   @include respondBelow(md) {
     grid-template-columns: 1fr;
+  }
+}
+
+.imageTrailing {
+  .text {
+    order: 1;
+  }
+
+  .media {
+    order: 2;
+  }
+}
+
+.imageLeading {
+  .media {
+    order: 1;
+  }
+
+  .text {
+    order: 2;
   }
 }
 
@@ -18,6 +48,15 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  justify-content: center;
+  button {
+    padding: 12px 20px;
+    background-color: #292828;
+    border-radius: 3px;
+    border: 1px solid #292828;
+    cursor: pointer;
+    color: white;
+  }
 }
 
 .eyebrow {
@@ -27,13 +66,16 @@
   font-weight: 700;
   font-family: "helvetica-neue-lt-pro-cond";
   font-size: 1rem;
+  color: #292828;
 }
 
 .heading {
   font-size: 48px;
-  font-family: "helvetica-neue-lt-pro-cond";
-  font-weight: 300;
-  line-height: 100%;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  line-height: 60px;
+  color: #292828;
+  letter-spacing: -2%;
 
   @include respondBelow(md) {
     font-size: 24px;
@@ -45,6 +87,21 @@
   p {
     font-weight: 400;
     font-size: 1.25rem;
+    line-height: 1.5;
+    color: #292828;
+    margin-bottom: 20px;
+
+    @include respondBelow(md) {
+      font-size: 1.05rem;
+    }
+  }
+  ul,
+  ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    font-weight: 400;
+    font-size: 1.25rem;
+    color: #292828;
     line-height: 1.5;
 
     @include respondBelow(md) {
@@ -61,9 +118,7 @@
 
 .image {
   width: 100%;
-  height: auto;
-  max-height: 520px;
+  max-height: 432px;
   object-fit: cover;
-  border-radius: 24px;
   box-shadow: 0 24px 50px rgba(0, 0, 0, 0.12);
 }

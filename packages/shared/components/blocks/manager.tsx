@@ -2,6 +2,7 @@ import React from "react";
 import { Hero } from "./hero/hero";
 import { TextBlock } from "./textblock/textblock";
 import { TwoColumnContent } from "./twocolumncontent/twocolumncontent";
+import { TextBlockWithBackgroundImage } from "./textblockWithBackgroundImage/textblockWithBackgroundImage";
 
 interface DynamicZoneComponent {
   id: number;
@@ -17,6 +18,7 @@ const componentMapping: Record<string, React.ComponentType<any>> = {
   "block.hero": Hero,
   "block.textblock": TextBlock,
   "block.twocoloumncontent": TwoColumnContent,
+  "block.textblockwithbackgroundimage": TextBlockWithBackgroundImage,
 };
 
 const DynamicZoneManager: React.FC<Props> = ({ dynamicZone }) => {

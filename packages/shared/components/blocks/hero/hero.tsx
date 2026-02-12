@@ -16,6 +16,7 @@ interface HeroProps {
   slideInterval?: number;
   intervalMs?: number;
   className?: string;
+  description?: string;
 }
 
 export const Hero: React.FC<HeroProps> = ({
@@ -25,6 +26,7 @@ export const Hero: React.FC<HeroProps> = ({
   slideInterval,
   intervalMs = 6000,
   className = "",
+  description,
 }: HeroProps) => {
   const images = (imagesProp?.length ? imagesProp : toImages(media)) ?? [];
   const resolvedIntervalMs =
@@ -58,7 +60,6 @@ export const Hero: React.FC<HeroProps> = ({
   if (!images.length) {
     return null;
   }
-
 
   const goNext = () => {
     setActiveIndex((prev) => (prev + 1) % images.length);
@@ -99,48 +100,7 @@ export const Hero: React.FC<HeroProps> = ({
           className={styles.title}
           dangerouslySetInnerHTML={{ __html: title }}
         />
-
-        <div className={styles.controls}>
-          <div className={styles.navButtons}>
-            <button
-              type="button"
-              onClick={goPrev}
-              className={styles.navButton}
-              aria-label="Previous slide"
-            >
-              <span aria-hidden="true">‹</span>
-            </button>
-            <button
-              type="button"
-              onClick={goNext}
-              className={styles.navButton}
-              aria-label="Next slide"
-            >
-              <span aria-hidden="true">›</span>
-            </button>
-          </div>
-          <div
-            className={styles.progressTrack}
-            aria-hidden="true"
-            style={
-              {
-                "--progress-duration": `${resolvedIntervalMs}ms`,
-              } as React.CSSProperties
-            }
-          >
-            <span
-              key={`${activeIndex}-${resolvedIntervalMs}`}
-              className={`${styles.progressFill} ${
-                images.length <= 1 || resolvedIntervalMs <= 0 ? styles.progressPaused : ""
-              }`.trim()}
-            />
-          </div>
-          <div className={styles.counter} aria-live="polite">
-            <span className={styles.counterCurrent}>{currentLabel}</span>
-            <span className={styles.counterDivider}>/</span>
-            <span className={styles.counterTotal}>{totalLabel}</span>
-          </div>
-        </div>
+        {description && <p>{description}</p>}
       </div>
     </section>
   );

@@ -17,6 +17,8 @@ function getBrandStyles(): React.CSSProperties {
     '--brand-accent': process.env.BRAND_ACCENT_COLOR || '#f093fb',
     '--brand-header-bg': process.env.BRAND_HEADER_BG || '#ffffff',
     '--brand-header-text': process.env.BRAND_HEADER_TEXT || '#333333',
+    '--brand-header-button-bg': process.env.BRAND_HEADER_BUTTON_BG || '#000000',
+    '--brand-header-button-text': process.env.BRAND_HEADER_BUTTON_TEXT || '#ffffff',
     '--brand-font-family': process.env.BRAND_FONT_FAMILY || 'system-ui, -apple-system, sans-serif',
   } as React.CSSProperties;
 }

@@ -14,6 +14,8 @@
                 "accentColor": "#f093fb",
                 "headerBg": "#ffffff",
                 "headerText": "#333333",
+                "buttonBg": "#000000",
+                "buttonTextColor": "#ffffff",
                 "fontFamily": "system-ui, -apple-system, sans-serif"
             }
         },
@@ -31,6 +33,8 @@
                 "accentColor": "#38bdf8",
                 "headerBg": "#0f172a",
                 "headerText": "#ffffff",
+                "buttonBg": "#ffffff",
+                "buttonTextColor": "#000000",
                 "fontFamily": "'Segoe UI', Tahoma, sans-serif"
             }
         },
@@ -48,6 +52,8 @@
                 "accentColor": "#34d399",
                 "headerBg": "#ffffff",
                 "headerText": "#1f2937",
+                "buttonBg": "#000000",
+                "buttonTextColor": "#ffffff",
                 "fontFamily": "'Georgia', serif"
             }
         },
@@ -65,6 +71,8 @@
                 "accentColor": "#fca5a5",
                 "headerBg": "#1c1917",
                 "headerText": "#fafaf9",
+                "buttonBg": "#ffffff",
+                "buttonTextColor": "#000000",
                 "fontFamily": "'Playfair Display', Georgia, serif"
             }
         },
@@ -82,6 +90,8 @@
                 "accentColor": "#fbbf24",
                 "headerBg": "#fffbeb",
                 "headerText": "#78350f",
+                "buttonBg": "#000000",
+                "buttonTextColor": "#ffffff",
                 "fontFamily": "'Poppins', sans-serif"
             }
         },
@@ -99,6 +109,8 @@
                 "accentColor": "#c4b5fd",
                 "headerBg": "#18181b",
                 "headerText": "#fafafa",
+                "buttonBg": "#ffffff",
+                "buttonTextColor": "#000000",
                 "fontFamily": "'Inter', system-ui, sans-serif"
             }
         },
@@ -116,6 +128,8 @@
                 "accentColor": "#fda4af",
                 "headerBg": "#fff1f2",
                 "headerText": "#881337",
+                "buttonBg": "#000000",
+                "buttonTextColor": "#ffffff",
                 "fontFamily": "'Lato', sans-serif"
             }
         },
@@ -133,6 +147,8 @@
                 "accentColor": "#22d3ee",
                 "headerBg": "#ecfeff",
                 "headerText": "#164e63",
+                "buttonBg": "#000000",
+                "buttonTextColor": "#ffffff",
                 "fontFamily": "'Roboto', sans-serif"
             }
         },
@@ -150,6 +166,8 @@
                 "accentColor": "#94a3b8",
                 "headerBg": "#f8fafc",
                 "headerText": "#0f172a",
+                "buttonBg": "#000000",
+                "buttonTextColor": "#ffffff",
                 "fontFamily": "'Montserrat', sans-serif"
             }
         },
@@ -167,6 +185,8 @@
                 "accentColor": "#a3e635",
                 "headerBg": "#1a2e05",
                 "headerText": "#ecfccb",
+                "buttonBg": "#ffffff",
+                "buttonTextColor": "#000000",
                 "fontFamily": "'Source Sans Pro', sans-serif"
             }
         }

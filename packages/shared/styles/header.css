@@ -15,6 +15,7 @@
   border: 1px solid var(--brand-header-button-bg, #000000);
   cursor: pointer;
   color: var(--brand-header-button-text, #ffffff);
+  text-decoration: none;
 }
 .header-container {
   max-width: 1200px;
@@ -31,6 +32,13 @@
   color: var(--brand-header-text, #333);
   text-decoration: none;
   transition: color 0.2s;
+}
+
+.header-logo img {
+  display: block;
+  max-height: 48px;
+  width: auto;
+  height: auto;
 }
 
 .header-logo:hover {

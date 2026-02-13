@@ -12,10 +12,10 @@
                 "primaryColor": "#667eea",
                 "secondaryColor": "#764ba2",
                 "accentColor": "#f093fb",
-                "headerBg": "#ffffff",
-                "headerText": "#333333",
-                "buttonBg": "#000000",
-                "buttonTextColor": "#ffffff",
+                "headerBg": "#292828",
+                "headerText": "#ffffff",
+                "buttonBg": "#ffffff",
+                "buttonTextColor": "#292828",
                 "fontFamily": "system-ui, -apple-system, sans-serif"
             }
         },

@@ -148,8 +148,7 @@ export default async function ApartmentsPage({ params }: ApartmentsPageProps) {
       <Header
         siteName={siteName}
         websiteUrl={websiteUrl}
-        floorplansUrl={basePath ? `${basePath}/floorplans` : "/floorplans"}
-        currentPage="floorplans"
+
       />
       <div className="modern-container">
         {floorplanId ? (

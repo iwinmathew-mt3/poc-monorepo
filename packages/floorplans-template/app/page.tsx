@@ -1,4 +1,5 @@
 import { Header } from "@repo/shared/components";
+import type { HeaderData } from "@repo/shared/components";
 import { FloorplansContent } from "./FloorplansContent";
 
 const floorplansBaseUrl =
@@ -45,12 +46,60 @@ function extractContentFromHtml(html: string): string {
   return html;
 }
 
+function buildGlobalUrl(): string {
+  const rawBaseUrl =
+    process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+    process.env.STRAPI_API_URL ||
+    "http://localhost:1337";
+  const normalizedBaseUrl = rawBaseUrl.endsWith("/api")
+    ? `${rawBaseUrl}/`
+    : rawBaseUrl.endsWith("/api/")
+      ? rawBaseUrl
+      : `${rawBaseUrl}/api/`;
+  const url = new URL("global", normalizedBaseUrl);
+  const params = new URLSearchParams({
+    "populate[header][populate][0]": "cta",
+    "populate[header][populate][1]": "logo",
+    "populate[header][populate][2]": "menuList",
+  });
+  url.search = params.toString();
+  return url.toString();
+}
+
+async function fetchGlobalHeader(): Promise<HeaderData | null> {
+  try {
+    const response = await fetch(buildGlobalUrl(), {
+      cache: "force-cache",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          process.env.NEXT_PUBLIC_STRAPI_API_TOKEN ||
+          process.env.STRAPI_API_TOKEN ||
+          ""
+        }`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch global header: ${response.status}`);
+    }
+
+    const json = (await response.json()) as {
+      data?: { header?: HeaderData | null };
+    };
+    return json?.data?.header ?? null;
+  } catch (error) {
+    console.error("Error fetching global header:", error);
+    return null;
+  }
+}
+
 export default async function FloorplansPage() {
   const siteName = process.env.SITE_NAME || "Property";
   const websiteUrl = process.env.WEBSITE_URL || "/";
-  const basePath = process.env.SITE_BASE_PATH || "";
   const floorplansSiteId =
     process.env.FLOORPLANS_SITE_ID || "";
+  const header = await fetchGlobalHeader();
 
   let htmlContent = "";
 
@@ -71,8 +120,7 @@ export default async function FloorplansPage() {
       <Header
         siteName={siteName}
         websiteUrl={websiteUrl}
-        floorplansUrl={basePath ? `${basePath}/floorplans` : "/floorplans"}
-        currentPage="floorplans"
+        header={header}
       />
       <main>
         <h1>Available Floorplans</h1>

@@ -19,8 +19,15 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(2rem, 5vw, 4rem);
   align-items: center;
-  @include respondBelow(md) {
+  @include respondBelow(lg) {
     grid-template-columns: 1fr;
+    .media {
+      grid-row: 1;
+    }
+
+    .text {
+      grid-row: 2;
+    }
   }
 }
 
@@ -78,7 +85,7 @@
   letter-spacing: -2%;
 
   @include respondBelow(md) {
-    font-size: 24px;
+    font-size: 30px;
     line-height: 130%;
   }
 }
@@ -92,7 +99,8 @@
     margin-bottom: 20px;
 
     @include respondBelow(md) {
-      font-size: 1.05rem;
+      font-size: 1.125rem;
+      margin-bottom: 12px;
     }
   }
   ul,

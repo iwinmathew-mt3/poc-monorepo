@@ -52,7 +52,9 @@ export function Header({
     }
     const trimmedBase = basePath.replace(/\/$/, "");
     const normalizedHref = href.startsWith("/") ? href : `/${href}`;
-    return basePath === "/" ? normalizedHref : `${trimmedBase}${normalizedHref}`;
+    return basePath === "/"
+      ? normalizedHref
+      : `${trimmedBase}${normalizedHref}`;
   };
 
   const logoUrl = getStrapiImageUrl(header?.logo?.url);

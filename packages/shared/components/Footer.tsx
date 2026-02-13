@@ -44,19 +44,8 @@ export type FooterData = {
   retailLeasingOpportunities?: FooterRetail | null;
 };
 
-function formatAddress(address?: FooterAddress | null): string {
-  if (!address) return "";
-  const city = address.city?.trim() ?? "";
-  const state = address.state?.trim() ?? "";
-  const zip = address.zip?.trim() ?? "";
-  const cityState = [city, state].filter(Boolean).join(", ");
-  return [address.addressLine1?.trim(), cityState, zip].filter(Boolean).join(" ");
-}
-
 export function Footer({ footer }: { footer?: FooterData | null }) {
   if (!footer) return null;
-
-  const address = formatAddress(footer.address);
   const propertyLogoUrl = getStrapiImageUrl(footer.propertyLogo?.url);
   const bozzutoLogoUrl = getStrapiImageUrl(footer.bozzutoLogo?.url);
 
@@ -93,12 +82,22 @@ export function Footer({ footer }: { footer?: FooterData | null }) {
         <div className="footer-columns">
           <div className="footer-column">
             <h4>Address</h4>
-            {address && <p>{address}</p>}
-            {footer.officePhone && (
-              <>
-                <h4>Office Phone</h4>
-                <p>{footer.officePhone}</p>
-              </>
+            {footer.address?.addressLine1 && (
+              <p>{footer.address.addressLine1},</p>
+            )}
+            {(footer.address?.city ||
+              footer.address?.state ||
+              footer.address?.zip) && (
+              <p>
+                {[
+                  footer.address?.city,
+                  footer.address?.state,
+                  footer.address?.zip,
+                ]
+                  .map((value) => value?.trim())
+                  .filter(Boolean)
+                  .join(",")}
+              </p>
             )}
           </div>
           <div className="footer-column">
@@ -144,5 +143,3 @@ export function Footer({ footer }: { footer?: FooterData | null }) {
     </footer>
   );
 }
-
-

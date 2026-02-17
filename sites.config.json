@@ -4,7 +4,7 @@
             "id": "property-001",
             "name": "Sunset Apartments",
             "basePath": "/property-001",
-            "strapiEndpoint": "http://localhost:1337/api",
+            "strapiEndpoint": "https://certain-cow-3109b9526d.strapiapp.com/api",
             "floorplansEnabled": true,
             "floorplansSiteId": "p0233508",
             "unitsSiteId": "p0233508",

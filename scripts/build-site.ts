@@ -188,7 +188,9 @@ export async function buildSite(config: SiteConfig): Promise<void> {
     SITE_NAME: config.name,
     SITE_BASE_PATH: config.basePath,
     STRAPI_API_URL:
-      process.env.NEXT_PUBLIC_STRAPI_API_URL || config.strapiEndpoint,
+      config.strapiEndpoint ||
+      process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+      process.env.STRAPI_API_URL,
     FLOORPLANS_SITE_ID: config.floorplansSiteId || "",
     UNITS_SITE_ID: config.unitsSiteId || "",
     ...getBrandEnv(config.brand),

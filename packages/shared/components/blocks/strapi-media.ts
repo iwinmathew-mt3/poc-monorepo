@@ -5,11 +5,10 @@ export function getStrapiImageUrl(url?: string | null): string {
   if (url.startsWith("http")) {
     return url;
   }
-  const baseUrl =
-    (process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337").replace(
-      /\/api\/?$/,
-      ""
-    );
+  const baseUrl = (process.env.NEXT_PUBLIC_STRAPI_API_URL || "").replace(
+    /\/api\/?$/,
+    "",
+  );
   return `${baseUrl}${url}`;
 }
 
@@ -54,7 +53,8 @@ export function normalizeStrapiMedia(media: unknown): StrapiMediaAttributes[] {
       {
         url: typeof record.url === "string" ? record.url : undefined,
         alternativeText:
-          typeof record.alternativeText === "string" || record.alternativeText === null
+          typeof record.alternativeText === "string" ||
+          record.alternativeText === null
             ? (record.alternativeText as string | null)
             : undefined,
       },
@@ -63,4 +63,3 @@ export function normalizeStrapiMedia(media: unknown): StrapiMediaAttributes[] {
 
   return [];
 }
-

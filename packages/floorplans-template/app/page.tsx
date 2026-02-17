@@ -32,7 +32,7 @@ async function fetchFloorplansHtml(siteId: string): Promise<string> {
 
 function extractContentFromHtml(html: string): string {
   const modernContainerMatch = html.match(
-    /<div[^>]*class="[^"]*modern-container[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<!--\s*JavaScript\s*-->\s*)?<script[^>]*>/i
+    /<div[^>]*class="[^"]*modern-container[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<!--\s*JavaScript\s*-->\s*)?<script[^>]*>/i,
   );
   if (modernContainerMatch) {
     return modernContainerMatch[1];
@@ -48,9 +48,7 @@ function extractContentFromHtml(html: string): string {
 
 function buildGlobalUrl(): string {
   const rawBaseUrl =
-    process.env.NEXT_PUBLIC_STRAPI_API_URL ||
-    process.env.STRAPI_API_URL ||
-    "http://localhost:1337";
+    process.env.NEXT_PUBLIC_STRAPI_API_URL || process.env.STRAPI_API_URL || "";
   const normalizedBaseUrl = rawBaseUrl.endsWith("/api")
     ? `${rawBaseUrl}/`
     : rawBaseUrl.endsWith("/api/")
@@ -97,8 +95,7 @@ async function fetchGlobalHeader(): Promise<HeaderData | null> {
 export default async function FloorplansPage() {
   const siteName = process.env.SITE_NAME || "Property";
   const websiteUrl = process.env.WEBSITE_URL || "/";
-  const floorplansSiteId =
-    process.env.FLOORPLANS_SITE_ID || "";
+  const floorplansSiteId = process.env.FLOORPLANS_SITE_ID || "";
   const header = await fetchGlobalHeader();
 
   let htmlContent = "";
@@ -117,11 +114,7 @@ export default async function FloorplansPage() {
 
   return (
     <>
-      <Header
-        siteName={siteName}
-        websiteUrl={websiteUrl}
-        header={header}
-      />
+      <Header siteName={siteName} websiteUrl={websiteUrl} header={header} />
       <main>
         <h1>Available Floorplans</h1>
         <p>Choose from our selection of thoughtfully designed floor plans.</p>

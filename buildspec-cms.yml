@@ -53,7 +53,3 @@ phases:
       - |
         echo "Syncing build to S3..."
         aws s3 sync dist/$SITE_ID/ s3://$S3_BUCKET/$SITE_ID/ --delete
-
-      - |
-        echo "Invalidating CloudFront for $SITE_ID..."
-        aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths "/$SITE_ID/*"

@@ -1,5 +1,5 @@
-import { Header } from "@repo/shared/components";
-import type { HeaderData } from "@repo/shared/components";
+import { Footer, Header } from "@repo/shared/components";
+import type { FooterData, HeaderData } from "@repo/shared/components";
 import { FloorplansContent } from "./FloorplansContent";
 
 const floorplansBaseUrl =
@@ -59,12 +59,23 @@ function buildGlobalUrl(): string {
     "populate[header][populate][0]": "cta",
     "populate[header][populate][1]": "logo",
     "populate[header][populate][2]": "menuList",
+    "populate[footer][populate][0]": "cta",
+    "populate[footer][populate][1]": "propertyLogo",
+    "populate[footer][populate][2]": "bozzutoLogo",
+    "populate[footer][populate][3]": "address",
+    "populate[footer][populate][4]": "officeHours",
+    "populate[footer][populate][5]": "retailLeasingOpportunities",
   });
   url.search = params.toString();
   return url.toString();
 }
 
-async function fetchGlobalHeader(): Promise<HeaderData | null> {
+type GlobalData = {
+  header?: HeaderData | null;
+  footer?: FooterData | null;
+};
+
+async function fetchGlobalData(): Promise<GlobalData | null> {
   try {
     const response = await fetch(buildGlobalUrl(), {
       cache: "force-cache",
@@ -83,9 +94,9 @@ async function fetchGlobalHeader(): Promise<HeaderData | null> {
     }
 
     const json = (await response.json()) as {
-      data?: { header?: HeaderData | null };
+      data?: { header?: HeaderData | null; footer?: FooterData | null };
     };
-    return json?.data?.header ?? null;
+    return json?.data ?? null;
   } catch (error) {
     console.error("Error fetching global header:", error);
     return null;
@@ -96,7 +107,7 @@ export default async function FloorplansPage() {
   const siteName = process.env.SITE_NAME || "Property";
   const websiteUrl = process.env.WEBSITE_URL || "/";
   const floorplansSiteId = process.env.FLOORPLANS_SITE_ID || "";
-  const header = await fetchGlobalHeader();
+  const globalData = await fetchGlobalData();
 
   let htmlContent = "";
 
@@ -114,7 +125,11 @@ export default async function FloorplansPage() {
 
   return (
     <>
-      <Header siteName={siteName} websiteUrl={websiteUrl} header={header} />
+      <Header
+        siteName={siteName}
+        websiteUrl={websiteUrl}
+        header={globalData?.header}
+      />
       <main>
         <h1>Available Floorplans</h1>
         <p>Choose from our selection of thoughtfully designed floor plans.</p>
@@ -126,6 +141,7 @@ export default async function FloorplansPage() {
           />
         </div>
       </main>
+      <Footer footer={globalData?.footer} />
     </>
   );
 }
